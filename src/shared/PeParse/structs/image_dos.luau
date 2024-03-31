@@ -1,5 +1,6 @@
 local module =  {}
-
+local structUtils = require(script.Parent.structutils)
+local ct = require(script.Parent.Parent.Parent.ctypes.ctypes)
 export type IMAGE_DOS_HEADER = {
     magic_byte:number,
     lastBytes:number,
@@ -27,17 +28,9 @@ export type IMAGE_DOS_HEADER = {
 
 
 
-local function quickArray(of,size,buf):{number}
-    local offsetAmount = 2;
-    local tab:{number} = {}
-    for i = 1,size,1 do 
-        table.insert(tab,buffer.readu16(buf,of))
-        of = of + offsetAmount
-    end
-    return tab
-end
 
 local printFormat = [[
+    
     Magic byte: %X
     Last bytes: %X
     Page count: %X
@@ -64,12 +57,17 @@ local printFormat = [[
 
 
 
+
+
  function  module.constructFromPeBuffer(callee,buf:buffer):IMAGE_DOS_HEADER 
-    local function quickWord(of) 
-        return buffer.readu16(buf, of)
+    local function quickWord(of)
+        return structUtils.quickBytes(of, buf, ct.WORD)
 
     end
-    
+    local function quickArray(of,size)
+        return structUtils.quickArray(of, size, buf, ct.WORD)
+
+    end
     local newdos = {} :: IMAGE_DOS_HEADER
       newdos.magic_byte = quickWord(0)
       newdos.lastBytes = quickWord(2)
@@ -85,10 +83,10 @@ local printFormat = [[
       newdos.InitCSVal = quickWord(0x16)
       newdos.RelocAdresss = quickWord(0x18)
       newdos.Overlay = quickWord(0x1A)
-      newdos.ReservedWords = quickArray(0x1C, 4,buf)
+      newdos.ReservedWords = quickArray(0x1C, 4)
       newdos.OemId = quickWord(0x24)
       newdos.OemInfo = quickWord(0x26)
-      newdos.ReservedWords2 = quickArray(0x28, 10, buf)
+      newdos.ReservedWords2 = quickArray(0x28, 10)
       newdos.NewHeaderAdress = quickWord(0x3c)
     
       setmetatable(newdos, { __tostring=function(tab:IMAGE_DOS_HEADER)
