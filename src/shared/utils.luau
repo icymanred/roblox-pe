@@ -9,7 +9,7 @@ function buffertricks.reverseBuffer(buf)
     return newbuf
 end
 
-local bitsize = 31;
+local maxbitfield = 24;
 local byte_width = 8;
 
 function buffertricks.xorBuffer(input1:buffer,input2:buffer)
@@ -20,7 +20,7 @@ end
 
 function buffertricks.flipEndiness(num:number) 
     local bufnumber = 0;
-    for i = 0,24,8 do 
+    for i = 0,maxbitfield,8 do 
         local curbyte = bit32.extract(num, i,byte_width)
         curbyte = bit32.lshift(curbyte, 24-i)
         bufnumber = bit32.bor(bufnumber,curbyte)
