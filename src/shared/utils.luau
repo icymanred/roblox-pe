@@ -12,12 +12,11 @@ end
 local maxbitfield = 24;
 local byte_width = 8;
 
-function buffertricks.xorBuffer(input1:buffer,input2:buffer)
 
-
-
+function buffertricks.printh(num:number) 
+    print(string.format("%X",num));
+    
 end
-
 function buffertricks.flipEndiness(num:number) 
     local bufnumber = 0;
     for i = 0,maxbitfield,8 do 
@@ -28,8 +27,15 @@ function buffertricks.flipEndiness(num:number)
     return bufnumber
 end
 
+function buffertricks.xorDWORD(data:number,key:number)
+    return buffertricks.flipEndiness(bit32.bxor(data,key))
 
 
-
+end
+function buffertricks.stringfromdword(e:number) 
+    local nb = buffer.create(4);
+    buffer.writeu32(nb, 0, e)
+    return buffer.readstring(nb, 0, 4)
+end
 
 return buffertricks
