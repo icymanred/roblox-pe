@@ -5,7 +5,13 @@ local rich = require(pe.structs.rich_header)
 local function test()
     local filebuf = buffer.fromstring(game:GetService("StudioService"):PromptImportFile({"exe"}):GetBinaryContents())
     local dos_img = dos(filebuf)
-    rich.frombufandof(filebuf,dos_img.NewHeaderAdress);
+    print(dos_img)
+   local rh =  rich.frombufandof(filebuf,dos_img.NewHeaderAdress);
+   local d = rich.decryptRH(rh);
+   for i,v in ipairs(d.compIds) do
+    print(`\nProduct name: {rich.matchProdId(v.highProdId)}\nBuild id: {v.lowBuildId}\nCount: {v.count}\n------`)
+
+   end
 end
 
 
